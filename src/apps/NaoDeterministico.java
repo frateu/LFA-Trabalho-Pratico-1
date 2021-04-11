@@ -10,9 +10,24 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
+
 import apps.Deterministico;
 
 public class NaoDeterministico {
+
+	public static ArrayList<String> removeRepp(ArrayList<String> list) {
+		ArrayList<String> l = new ArrayList<>();
+
+		for (String i : list) {
+			if (!l.contains(i)) {
+				l.add(i);
+			}
+		}
+
+		Collections.sort(l);
+
+		return l;
+	}
 
 	public static int statesCount() {
 		int numStates = 0;
@@ -36,7 +51,7 @@ public class NaoDeterministico {
 
 		return numStates;
 	}
-	
+
 //gerar todos os estados possiveis
 	public static List<SortedSet<Comparable>> genAllStates(ArrayList<ArrayList<String>> automaton, int numStates) {
 
@@ -92,12 +107,11 @@ public class NaoDeterministico {
 		return listAllStates;
 
 	}
-	
-	public static ArrayList<String> organizeNewStates(List<SortedSet<Comparable>> listAllStates, int numStates){
+
+	// arrumando bagunça que codigo externo causou
+	public static ArrayList<ArrayList<String>> sortedSetTrans(List<SortedSet<Comparable>> listAllStates) {
 		ArrayList<ArrayList<String>> allStates = new ArrayList<>();
-		ArrayList<String> newAllStates = new ArrayList<>();
-		
-		// transformar a sortedset em array list
+
 		for (int x = 0; x < listAllStates.size(); x++) {
 			SortedSet<Comparable> las = listAllStates.get(x);
 			ArrayList<String> arrayInterno = new ArrayList<>();
@@ -108,23 +122,195 @@ public class NaoDeterministico {
 			}
 			allStates.add(arrayInterno);
 		}
-		
+
+		return allStates;
+	}
+
+	// criando novos estado conforme o index
+	public static ArrayList<String> organizeNewStates(ArrayList<ArrayList<String>> allStates, int numStates) {
+		ArrayList<String> newAllStates = new ArrayList<>();
+
 		int cont = numStates;
-		
+
 		for (int y = 0; y < allStates.size(); y++) {
 			if (allStates.get(y).size() == 1) {
 				ArrayList<String> valor = allStates.get(y);
-				newAllStates.add(y, valor.get(0) );
-				}else if (allStates.get(y).size() > 1) {
-					newAllStates.add(Integer.toString(cont));
-					cont++;
-				}
+				newAllStates.add(y, valor.get(0));
+			} else if (allStates.get(y).size() > 1) {
+				newAllStates.add(Integer.toString(cont));
+				cont++;
 			}
-		
-		System.out.println(newAllStates);
+		}
 
 		return newAllStates;
 
 	}
-	
+
+	public static ArrayList<ArrayList<String>> tableGen(ArrayList<ArrayList<String>> allStates,
+			ArrayList<String> newAllStates, ArrayList<ArrayList<String>> automaton, ArrayList<String> alphabet,
+			int numStates) {
+
+		ArrayList<ArrayList<String>> newStates = new ArrayList<>();
+		int verf = 0;
+
+		String stateAnalized = newAllStates.get(0);
+
+		ArrayList<ArrayList<ArrayList<String>>> listPartialTrans = new ArrayList<>();
+
+		for (int lenSt = 0; lenSt < newAllStates.size(); lenSt++) {
+
+			ArrayList<String> partialFinalState = new ArrayList<>();
+			ArrayList<String> partialNewState = new ArrayList<>();
+			ArrayList<String> partialTrans = new ArrayList<>();
+			ArrayList<String> listState = new ArrayList<>();
+
+			if (verf == 0) {
+
+				for (int at = 0; at < automaton.size(); at++) {
+					ArrayList<String> partialAutomaton = automaton.get(at);
+					for (String src : newAllStates) {
+						if (src.equals(stateAnalized)) {
+							listState = allStates.get(Integer.parseInt(src));
+
+						}
+						if (listState.size() > 1) {
+							for (int ls = 0; ls < listState.size(); ls++) {
+								if (partialAutomaton.get(0).equals(listState.get(ls))) {
+									for (String alph : alphabet) {
+										if (partialAutomaton.get(1).equals(alph)) {
+											if (!partialFinalState.contains(partialAutomaton.get(2))) {
+												partialFinalState.add(partialAutomaton.get(2));
+											}
+											if (!partialTrans.contains(partialAutomaton.get(1))) {
+												partialTrans.add(partialAutomaton.get(1));
+											}
+											ArrayList<ArrayList<String>> partialConn = new ArrayList<>();
+											partialConn.add(partialTrans);
+											partialConn.add(partialFinalState);
+											if (listPartialTrans.isEmpty()) {
+												listPartialTrans.add(partialConn);
+											}
+											verf = 1;
+										}
+									}
+
+									if (partialTrans.isEmpty()) {
+										break;
+									}
+								}
+							}
+						} else {
+							for (String alph : alphabet) {
+								if (partialAutomaton.get(0).equals(stateAnalized)
+										&& partialAutomaton.get(1).equals(alph)) {
+									if (!partialFinalState.contains(partialAutomaton.get(2))) {
+										partialFinalState.add(partialAutomaton.get(2));
+									}
+									if (!partialTrans.contains(partialAutomaton.get(1))) {
+										partialTrans.add(partialAutomaton.get(1));
+									}
+									ArrayList<ArrayList<String>> partialConn = new ArrayList<>();
+									partialConn.add(partialTrans);
+									partialConn.add(partialFinalState);
+									if (listPartialTrans.isEmpty()) {
+										listPartialTrans.add(partialConn);
+									}
+
+									verf = 1;
+								}
+
+								if (partialTrans.isEmpty()) {
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				if (verf == 1) {
+					String p0 = "";
+					String p1 = "";
+					String p2 = "";
+
+					if (listPartialTrans.get(0).get(0).size() > 1 && !partialFinalState.isEmpty()) {
+						for (int lpt = 0; lpt < listPartialTrans.get(0).get(0).size(); lpt++) {
+							partialNewState.clear();
+							p0 = stateAnalized;
+							p1 = listPartialTrans.get(0).get(0).get(lpt);
+							if (listPartialTrans.get(0).get(1).size() > 1) {
+								for (int z = 0; z < allStates.size(); z++) {
+									if (allStates.get(z).size() > 1) {
+										if (allStates.get(z).equals(listPartialTrans.get(0).get(1))) {
+											p2 = Integer.toString(z);
+										}
+									}
+								}
+							} else {
+								p2 = listPartialTrans.get(0).get(1).get(0);
+							}
+
+							partialNewState.add(0, p0);
+							partialNewState.add(1, p1);
+							partialNewState.add(2, p2);
+
+							if (!partialNewState.get(0).isEmpty()) {
+								System.out.println("partial new state: " + partialNewState);
+								newStates.add(partialNewState);
+								System.out.println("new State: " + newStates);
+								verf = 2;
+							}
+						}
+					} else if (listPartialTrans.get(0).get(0).size() == 1 && !partialFinalState.isEmpty()) {
+						p0 = stateAnalized;
+						p1 = listPartialTrans.get(0).get(0).get(0);
+						if (listPartialTrans.get(0).get(1).size() > 1) {
+							for (int z = 0; z < allStates.size(); z++) {
+								if (allStates.get(z).size() > 1) {
+									if (allStates.get(z).equals(listPartialTrans.get(0).get(1))) {
+										p2 = Integer.toString(z);
+									}
+								}
+							}
+						} else {
+							p2 = listPartialTrans.get(0).get(1).get(0);
+						}
+
+						partialNewState.add(0, p0);
+						partialNewState.add(1, p1);
+						partialNewState.add(2, p2);
+
+						if (!partialNewState.get(0).isEmpty()) {
+							System.out.println("partial new state: " + partialNewState);
+							newStates.add(partialNewState);
+							System.out.println("new State: " + newStates);
+							verf = 2;
+						}
+					}
+				}
+
+				if (verf == 2) {
+					stateAnalized = partialNewState.get(2);
+					listPartialTrans.clear();
+					partialFinalState.clear();
+					partialNewState.clear();
+					verf = 0;
+				}
+			}
+		}
+
+		System.out.println("/////////////////////////////////");
+
+		for (ArrayList<String> as : allStates) {
+			System.out.println(as);
+		}
+
+		System.out.println("/////////////////////////////////");
+
+		for (ArrayList<String> ns : newStates) {
+			System.out.println(ns);
+		}
+
+		return newStates;
+	}
+
 }
