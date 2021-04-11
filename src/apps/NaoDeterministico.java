@@ -1,4 +1,4 @@
-package src;
+package apps;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
-import src.Deterministico;
+import apps.Deterministico;
 
 public class NaoDeterministico {
 

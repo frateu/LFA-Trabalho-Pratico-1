@@ -2,7 +2,7 @@ package client;
 
 import java.util.ArrayList;
 
-import src.*;
+import apps.*;
 
 public class Client {
 
