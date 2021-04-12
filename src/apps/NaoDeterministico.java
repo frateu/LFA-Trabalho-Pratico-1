@@ -173,9 +173,11 @@ public class NaoDeterministico {
 
 		String stateAnalized = newAllStates.get(0);
 
-		ArrayList<ArrayList<ArrayList<String>>> listPartialTrans = new ArrayList<>();
+		
 
 		for (int lenSt = 0; lenSt < newAllStates.size(); lenSt++) {
+			
+			ArrayList<ArrayList<ArrayList<String>>> listPartialTrans = new ArrayList<>();
 
 			ArrayList<String> partialFinalState = new ArrayList<>();
 			ArrayList<String> partialNewState = new ArrayList<>();
@@ -195,6 +197,10 @@ public class NaoDeterministico {
 							for (int ls = 0; ls < listState.size(); ls++) {
 								if (partialAutomaton.get(0).equals(listState.get(ls))) {
 									for (String alph : alphabet) {
+//										System.out.println("partial auto 0: " + partialAutomaton.get(0));
+//										System.out.println("list state: " + listState.get(ls));
+//										System.out.println("alfabeto: " + alph);
+//										System.out.println("partial auto 1: " + partialAutomaton.get(1));
 										if (partialAutomaton.get(1).equals(alph)) {
 											if (!partialFinalState.contains(partialAutomaton.get(2))) {
 												partialFinalState.add(partialAutomaton.get(2));
@@ -254,12 +260,14 @@ public class NaoDeterministico {
 							if (listPartialTrans.get(0).get(1).size() > 1) {
 								for (int z = 0; z < allStates.size(); z++) {
 									if (allStates.get(z).size() > 1) {
+//										System.out.println("list partial trans get: " + listPartialTrans.get(0).get(1));
 										if (allStates.get(z).equals(listPartialTrans.get(0).get(1))) {
 											p2 = Integer.toString(z);
 										}
 									}
 								}
 							} else {
+//								System.out.println("list partial trans get: " + listPartialTrans.get(0).get(1));
 								p2 = listPartialTrans.get(0).get(1).get(0);
 							}
 
@@ -268,9 +276,9 @@ public class NaoDeterministico {
 							partialNewState.add(2, p2);
 
 							if (!partialNewState.get(0).isEmpty()) {
-								System.out.println("partial new state: " + partialNewState);
+//								System.out.println("partial new state: " + partialNewState);
 								newStates.add(partialNewState.toString());
-								System.out.println("new State: " + newStates);
+//								System.out.println("new State: " + newStates);
 								verf = 2;
 							}
 						}
@@ -294,9 +302,9 @@ public class NaoDeterministico {
 						partialNewState.add(2, p2);
 
 						if (!partialNewState.get(0).isEmpty()) {
-							System.out.println("partial new state: " + partialNewState);
+//							System.out.println("partial new state (else): " + partialNewState);
 							newStates.add(partialNewState.toString());
-							System.out.println("new State: " + newStates);
+//							System.out.println("new State (else): " + newStates);
 							verf = 2;
 						}
 					}
@@ -334,7 +342,9 @@ public class NaoDeterministico {
 			char[] chr = ns.toCharArray();
 			for (char c : chr) {
 				if (c == ' ' || c == ',' || c == '[' || c == ']') {
-					// não faz nada
+					if (c == ']') {
+						break;
+					}
 				} else {
 					charList.add(String.valueOf(c));
 				}
