@@ -146,12 +146,14 @@ public class NaoDeterministico {
 
 	}
 
-	public static ArrayList<ArrayList<String>> tableGen(ArrayList<ArrayList<String>> allStates,
-			ArrayList<String> newAllStates, ArrayList<ArrayList<String>> automaton, ArrayList<String> alphabet,
-			int numStates) {
+	public static ArrayList<ArrayList<String>> tableGen(ArrayList<ArrayList<String>> allStates, ArrayList<String> newAllStates,
+			ArrayList<ArrayList<String>> automaton, ArrayList<String> alphabet, int numStates) {
 
-		ArrayList<ArrayList<String>> newStates = new ArrayList<>();
+		List<String> newStates = new ArrayList<>();
+
 		int verf = 0;
+
+		int contador = 0;
 
 		String stateAnalized = newAllStates.get(0);
 
@@ -255,9 +257,10 @@ public class NaoDeterministico {
 
 							if (!partialNewState.get(0).isEmpty()) {
 								System.out.println("partial new state: " + partialNewState);
-								newStates.add(partialNewState);
+								newStates.add(partialNewState.toString());
 								System.out.println("new State: " + newStates);
 								verf = 2;
+								contador++;
 							}
 						}
 					} else if (listPartialTrans.get(0).get(0).size() == 1 && !partialFinalState.isEmpty()) {
@@ -281,9 +284,10 @@ public class NaoDeterministico {
 
 						if (!partialNewState.get(0).isEmpty()) {
 							System.out.println("partial new state: " + partialNewState);
-							newStates.add(partialNewState);
+							newStates.add(partialNewState.toString());
 							System.out.println("new State: " + newStates);
 							verf = 2;
+							contador++;
 						}
 					}
 				}
@@ -306,11 +310,29 @@ public class NaoDeterministico {
 
 		System.out.println("/////////////////////////////////");
 
-		for (ArrayList<String> ns : newStates) {
-			System.out.println(ns);
+		ArrayList<ArrayList<String>> finalNewStates = new ArrayList<>();
+
+		for (String ns : newStates) {
+			ArrayList<String> charList = new ArrayList<>();
+			char[] chr = ns.toCharArray();
+			for (char c : chr) {
+				if (c == ' ' || c == ',' || c == '[' || c == ']') {
+					// não faz nada
+				} else {
+					charList.add(String.valueOf(c));
+				}
+			}
+			finalNewStates.add(charList);
 		}
 
-		return newStates;
+//		for (ArrayList<String> a : asd) {
+//			System.out.println("a: " + a);
+//			for (String b : a) {
+//				System.out.println(b);
+//			}
+//		}
+
+		return finalNewStates;
 	}
 
 }
