@@ -146,14 +146,30 @@ public class NaoDeterministico {
 
 	}
 
-	public static ArrayList<ArrayList<String>> tableGen(ArrayList<ArrayList<String>> allStates, ArrayList<String> newAllStates,
-			ArrayList<ArrayList<String>> automaton, ArrayList<String> alphabet, int numStates) {
+	public static ArrayList<String> newFinalStates(ArrayList<ArrayList<String>> allStates,
+			ArrayList<String> finalState) {
+		ArrayList<String> newFinalStates = new ArrayList<>();
+
+		for (int i = 0; i < allStates.size(); i++) {
+			for (int j = 0; j < allStates.get(i).size(); j++) {
+				for (int k = 0; k < finalState.size(); k++) {
+					if (allStates.get(i).get(j).equals(finalState.get(k))) {
+						newFinalStates.add(Integer.toString(i));
+					}
+				}
+			}
+		}
+
+		return newFinalStates;
+	}
+
+	public static ArrayList<ArrayList<String>> tableGen(ArrayList<ArrayList<String>> allStates,
+			ArrayList<String> newAllStates, ArrayList<ArrayList<String>> automaton, ArrayList<String> alphabet,
+			int numStates) {
 
 		List<String> newStates = new ArrayList<>();
 
 		int verf = 0;
-
-		int contador = 0;
 
 		String stateAnalized = newAllStates.get(0);
 
@@ -165,6 +181,7 @@ public class NaoDeterministico {
 			ArrayList<String> partialNewState = new ArrayList<>();
 			ArrayList<String> partialTrans = new ArrayList<>();
 			ArrayList<String> listState = new ArrayList<>();
+			ArrayList<ArrayList<String>> partialConn = new ArrayList<>();
 
 			if (verf == 0) {
 
@@ -173,7 +190,6 @@ public class NaoDeterministico {
 					for (String src : newAllStates) {
 						if (src.equals(stateAnalized)) {
 							listState = allStates.get(Integer.parseInt(src));
-
 						}
 						if (listState.size() > 1) {
 							for (int ls = 0; ls < listState.size(); ls++) {
@@ -186,7 +202,8 @@ public class NaoDeterministico {
 											if (!partialTrans.contains(partialAutomaton.get(1))) {
 												partialTrans.add(partialAutomaton.get(1));
 											}
-											ArrayList<ArrayList<String>> partialConn = new ArrayList<>();
+											//partial conn tava aqui
+											
 											partialConn.add(partialTrans);
 											partialConn.add(partialFinalState);
 											if (listPartialTrans.isEmpty()) {
@@ -211,18 +228,13 @@ public class NaoDeterministico {
 									if (!partialTrans.contains(partialAutomaton.get(1))) {
 										partialTrans.add(partialAutomaton.get(1));
 									}
-									ArrayList<ArrayList<String>> partialConn = new ArrayList<>();
+									//partial conn tava aqui
 									partialConn.add(partialTrans);
 									partialConn.add(partialFinalState);
 									if (listPartialTrans.isEmpty()) {
 										listPartialTrans.add(partialConn);
 									}
-
 									verf = 1;
-								}
-
-								if (partialTrans.isEmpty()) {
-									break;
 								}
 							}
 						}
@@ -260,7 +272,6 @@ public class NaoDeterministico {
 								newStates.add(partialNewState.toString());
 								System.out.println("new State: " + newStates);
 								verf = 2;
-								contador++;
 							}
 						}
 					} else if (listPartialTrans.get(0).get(0).size() == 1 && !partialFinalState.isEmpty()) {
@@ -287,7 +298,6 @@ public class NaoDeterministico {
 							newStates.add(partialNewState.toString());
 							System.out.println("new State: " + newStates);
 							verf = 2;
-							contador++;
 						}
 					}
 				}
@@ -297,15 +307,22 @@ public class NaoDeterministico {
 					listPartialTrans.clear();
 					partialFinalState.clear();
 					partialNewState.clear();
+					partialConn.clear();
 					verf = 0;
 				}
 			}
 		}
 
 		System.out.println("/////////////////////////////////");
+		
+		System.out.println("\nNovos Estados Criados: ");
 
-		for (ArrayList<String> as : allStates) {
-			System.out.println(as);
+//		for (ArrayList<String> as : allStates) {
+//			System.out.println(as);
+//		}
+		
+		for (int as = 0; as < allStates.size(); as++) {
+			System.out.println(as + ": " + allStates.get(as));
 		}
 
 		System.out.println("/////////////////////////////////");
@@ -322,15 +339,19 @@ public class NaoDeterministico {
 					charList.add(String.valueOf(c));
 				}
 			}
-			finalNewStates.add(charList);
+			if (!finalNewStates.contains(charList)) {
+				finalNewStates.add(charList);
+			}
 		}
 
-//		for (ArrayList<String> a : asd) {
-//			System.out.println("a: " + a);
+		System.out.println("\nNovo Autômato: ");
+		
+		for (ArrayList<String> a : finalNewStates) {
+			System.out.println("a: " + a);
 //			for (String b : a) {
 //				System.out.println(b);
 //			}
-//		}
+		}
 
 		return finalNewStates;
 	}

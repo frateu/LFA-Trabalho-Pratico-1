@@ -107,6 +107,14 @@ public class Deterministico {
 			automaton.add(listStates);
 
 		}
+		
+		System.out.println("/////////////////////////////////");
+		
+		System.out.println("\nAutômato: ");
+		
+		for (ArrayList<String> aut : automaton) {
+			System.out.println(aut);
+		}
 
 		return automaton;
 
@@ -204,20 +212,22 @@ public class Deterministico {
 		}
 
 		int verfFinal = 0;
+		
+		System.out.println("/////////////////////////////////");
+		
+		System.out.println("\nPalavra: " + word);
 
 		for (String sf : finalState) {
 			if (actualState.equals(sf) && verfWordLimit == 0) {
 				JOptionPane.showMessageDialog(null, "Resultado:\nEssa palavra pertence a esse autômato");
+				System.out.println("\nResultado:\nEssa palavra pertence a esse autômato");
 				verfFinal = 1;
 			}
 		}
 
 		if (verfFinal == 0) {
 			JOptionPane.showMessageDialog(null, "Resultado:\nEssa palavra não pertence a esse autômato");
+			System.out.println("\nResultado:\nEssa palavra não pertence a esse autômato");
 		}
-
-		System.out.println("Autômato: " + automaton + "\n\nPalavra: " + word);
-
 	}
-
 }
