@@ -1,0 +1,4 @@
+language: java
+rvn:
+        - 14
+        - eclipse
